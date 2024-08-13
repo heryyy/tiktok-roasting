@@ -10,6 +10,7 @@ export default function RoastForm() {
   const [avatar, setAvatar] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [language, setLanguage] = useState("indonesian"); // Default language
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,13 +19,14 @@ export default function RoastForm() {
     try {
       const profile = await roastTiktok(username);
       if (profile.avatar) {
-        setAvatar(profile.avatar)
+        setAvatar(profile.avatar);
       }
       const response = await axios.post(
         "/api/generate-roast",
         {
           username,
           profile,
+          language, // Pass the selected language to the API
         },
         {
           headers: {
@@ -46,8 +48,6 @@ export default function RoastForm() {
 
   return (
     <div className="ml-5 mr-5 mt-10">
-    {/*<div className="max-w-md mx-auto mt-10">*/}
-
       <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
@@ -57,6 +57,21 @@ export default function RoastForm() {
           className="w-full p-2 border rounded text-black"
           required
         />
+
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value)}
+          className="w-full p-2 border rounded text-black"
+        >
+          <option value="indonesian">Indonesian</option>
+          <option value="english">English</option>
+          <option value="mandarin">Mandarin</option>
+          <option value="japanese">Japanese</option>
+          <option value="korean">Korean</option>
+          <option value="vietnamese">Vietnamese</option>
+          <option value="filipino">Filipino</option>
+        </select>
+
         <button
           type="submit"
           disabled={loading}
@@ -66,10 +81,14 @@ export default function RoastForm() {
         </button>
       </form>
       {error && <p className="text-red-500 mt-4">{error}</p>}
-      { avatar && (
-          <div className="flex justify-center mt-4 items-center p-4">
-            <img alt="" src={avatar} className="w-32 h-32 rounded-full border-4 border-blue-600 shadow-lg object-cover"/>
-          </div>
+      {avatar && (
+        <div className="flex justify-center mt-4 items-center p-4">
+          <img
+            alt=""
+            src={avatar}
+            className="w-32 h-32 rounded-full border-4 border-blue-600 shadow-lg object-cover"
+          />
+        </div>
       )}
       {roast && (
         <div className="mt-4 p-4 bg-gray-100 rounded">
